@@ -32,7 +32,20 @@ fi
 # ------------------------------------------------------------------- install
 echo "==> Installing ${THEME} to ${DEST}"
 sudo mkdir -p "${DEST}"
-tar -C "${SRC}" --exclude=./.git -cf - . | sudo tar -C "${DEST}" -xf -
+
+# On a re-install, keep the wallpaper, profile picture and theme.conf you have
+# already set up; everything else is refreshed from the repo.
+EXCLUDES=(--exclude=./.git)
+if [ -f "${DEST}/theme.conf" ]; then
+    EXCLUDES+=(--exclude=./theme.conf)
+    echo "    (existing theme.conf, wallpaper and picture kept)"
+fi
+for f in assets/background.jpg assets/background_blur.jpg assets/avatar.png; do
+    if [ -f "${DEST}/${f}" ]; then
+        EXCLUDES+=(--exclude=./${f})
+    fi
+done
+tar -C "${SRC}" "${EXCLUDES[@]}" -cf - . | sudo tar -C "${DEST}" -xf -
 
 echo
 echo "==> Pointing SDDM at the theme"

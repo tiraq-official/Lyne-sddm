@@ -57,6 +57,7 @@ Everything lives in `theme.conf`.
 | `AvatarImage` | the round avatar — empty uses the account's own picture, or give a path |
 | `PromptText` · `WeatherText` · `ShowWeather` | the two chips |
 | `PillFrost`, `PillBlurRadius` | the frosted glass |
+| `TintColor`, `AccentColor` | written by `configure.py` from the wallpaper — the pills, borders and hover states follow it |
 | `AlwaysShowPowerButtons` | keep suspend / restart / power visible in `--test-mode` |
 | `DimBackground`, `BlurDuration` | dimming and cross-fade |
 

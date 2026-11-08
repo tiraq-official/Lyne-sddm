@@ -13,16 +13,18 @@ theme.conf at the result. Run it again at any time to change either one.
 Press Enter at a prompt to keep what is already there.
 """
 import argparse
+import colorsys
 import os
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 try:
-    from PIL import Image, ImageFilter
+    from PIL import Image, ImageDraw, ImageFilter
 except ImportError:
     sys.exit(
         "Pillow is required to process images.\n"
@@ -116,6 +118,48 @@ def update_conf(theme_dir, values):
 
 # ----------------------------------------------------------- image work ---
 
+def _dominant_hue(im):
+    """Hue and saturation of the most prominent colourful part of an image."""
+    small = im.resize((80, 80), Image.LANCZOS)
+    q = small.quantize(colors=16, method=Image.MEDIANCUT).convert("RGB")
+    pixels = list(q.getdata())
+    counts = Counter(pixels)
+    total = float(len(pixels))
+
+    best_hsv, best_score = None, -1.0
+    for rgb, n in counts.items():
+        h, s, v = colorsys.rgb_to_hsv(rgb[0] / 255.0, rgb[1] / 255.0, rgb[2] / 255.0)
+        if v < 0.08 or v > 0.97:            # skip near-black and near-white
+            continue
+        score = (n / total) * (s ** 1.5) * (0.30 + 0.70 * min(1.0, v * 1.7))
+        if score > best_score:
+            best_hsv, best_score = (h, s, v), score
+
+    if best_hsv is None:                    # nothing colourful: just average it
+        avg = tuple(sum(c) / total for c in zip(*pixels))
+        h, s, _v = colorsys.rgb_to_hsv(avg[0] / 255.0, avg[1] / 255.0, avg[2] / 255.0)
+        return h, s
+    return best_hsv[0], best_hsv[1]
+
+
+def extract_colors(path):
+    """(pill tint, accent) taken from the wallpaper's dominant colour."""
+    h, s = _dominant_hue(Image.open(path).convert("RGB"))
+
+    # a grey wallpaper has no meaningful hue: stay neutral rather than
+    # inventing a colour (hue 0 would come out red)
+    if s < 0.10:
+        return "#191a1d", "#e8e9ee"
+
+    # deep tint for the frosted pills - always dark enough for white text
+    tr, tg, tb = colorsys.hsv_to_rgb(h, min(0.55, s * 0.85), 0.13)
+    # brighter version for borders, hover and the focused password field
+    ar, ag, ab = colorsys.hsv_to_rgb(h, min(0.85, max(0.45, s)), 0.92)
+
+    return ("#%02x%02x%02x" % (round(tr * 255), round(tg * 255), round(tb * 255)),
+            "#%02x%02x%02x" % (round(ar * 255), round(ag * 255), round(ab * 255)))
+
+
 def build_wallpaper(src, out):
     im = Image.open(src).convert("RGB")
     if max(im.size) > WALL_MAX:
@@ -133,11 +177,28 @@ def build_blur(wall_path, out):
 
 
 def build_avatar(src, out):
+    """Centre-crop to a square and knock the corners off, so the greeter can
+    draw it as a circle without needing a mask effect at runtime."""
     im = Image.open(src)
     if im.mode not in ("RGB", "RGBA"):
         im = im.convert("RGBA")
-    if max(im.size) > AVATAR_MAX:
-        im.thumbnail((AVATAR_MAX, AVATAR_MAX), Image.LANCZOS)
+
+    side = min(im.size)
+    left = (im.width - side) // 2
+    top = (im.height - side) // 2
+    im = im.crop((left, top, left + side, top + side))
+    if side > AVATAR_MAX:
+        im = im.resize((AVATAR_MAX, AVATAR_MAX), Image.LANCZOS)
+        side = AVATAR_MAX
+    im = im.convert("RGBA")
+
+    # draw the mask at 4x and scale it down so the circle edge is smooth
+    big = side * 4
+    mask = Image.new("L", (big, big), 0)
+    ImageDraw.Draw(mask).ellipse((0, 0, big - 1, big - 1), fill=255)
+    mask = mask.resize((side, side), Image.LANCZOS)
+
+    im.putalpha(mask)
     im.save(out, "PNG", optimize=True)
 
 
@@ -174,6 +235,13 @@ def main():
 
     if src is None:
         print("  kept the current wallpaper")
+        current = theme / WALL_NAME
+        if current.exists():
+            # still refresh the tint, so a theme.conf without it gets one
+            tint, accent = extract_colors(current)
+            update_conf(theme, {"TintColor": tint, "AccentColor": accent})
+            print("  ✓ pill tint %s, accent %s (from the current wallpaper)"
+                  % (tint, accent))
     else:
         tmpdir = tempfile.mkdtemp()
         try:
@@ -183,9 +251,12 @@ def main():
             build_blur(wall, blur)
             place(wall, theme / WALL_NAME)
             place(blur, theme / BLUR_NAME)
-            update_conf(theme, {"background": WALL_NAME, "backgroundBlur": BLUR_NAME})
+            tint, accent = extract_colors(wall)
+            update_conf(theme, {"background": WALL_NAME, "backgroundBlur": BLUR_NAME,
+                                "TintColor": tint, "AccentColor": accent})
             print("  ✓ %s" % WALL_NAME)
             print("  ✓ %s (blurred copy)" % BLUR_NAME)
+            print("  ✓ pill tint %s, accent %s (taken from the wallpaper)" % (tint, accent))
         finally:
             shutil.rmtree(tmpdir, ignore_errors=True)
 

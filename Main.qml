@@ -41,10 +41,13 @@ Rectangle {
     // ------------------------------------------------------------ palette ---
     property color cText:        "#ffffff"
     property color cTextDim:     "#d9e6f5"
-    property color cGlass:       Qt.rgba(0.027, 0.053, 0.106, 0.78)
-    property color cGlassStrong: Qt.rgba(0.018, 0.039, 0.078, 0.90)
+    // tint + accent are derived from the wallpaper (configure.py writes them)
+    property color cTint:        (config.TintColor   && config.TintColor   !== "") ? config.TintColor   : "#071427"
+    property color cAccentTint:  (config.AccentColor && config.AccentColor !== "") ? config.AccentColor : "#a7d4ff"
+    property color cGlass:       Qt.rgba(cTint.r, cTint.g, cTint.b, 0.78)
+    property color cGlassStrong: Qt.rgba(cTint.r * 0.80, cTint.g * 0.80, cTint.b * 0.80, 0.90)
     property color cStroke:      Qt.rgba(1, 1, 1, 0.14)
-    property color cAccent:      "#a7d4ff"
+    property color cAccent:      cAccentTint
     property color cDanger:      "#ffb4b4"
 
     // -------------------------------------------------------------- fonts ---
