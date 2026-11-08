@@ -52,6 +52,15 @@ echo "==> Pointing SDDM at the theme"
 sudo mkdir -p /etc/sddm.conf.d
 printf '[Theme]\nCurrent=%s\n' "${THEME}" | sudo tee "${DROPIN}" >/dev/null
 
+# SDDM reads /etc/sddm.conf AFTER the sddm.conf.d drop-ins, so a Current=
+# sitting in there wins over the drop-in we just wrote. Update it as well.
+CONF="/etc/sddm.conf"
+if [ -f "${CONF}" ] && grep -qE '^[[:space:]]*Current[[:space:]]*=' "${CONF}"; then
+    echo "    ${CONF} also sets Current= (it overrides sddm.conf.d) - updating it"
+    sudo cp "${CONF}" "${CONF}.bak"
+    sudo sed -i "s|^[[:space:]]*Current[[:space:]]*=.*$|Current=${THEME}|" "${CONF}"
+fi
+
 # --------------------------------------------------------------- configure
 if python3 -c "import PIL" 2>/dev/null; then
     python3 "${DEST}/configure.py" --theme "${DEST}" --no-tip || true
