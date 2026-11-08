@@ -2,7 +2,7 @@
 
 **A frosted-glass greeter for SDDM.** A profile selector on the left, a session selector on the right, and a password bar that rises out of a blurred wallpaper the moment you start typing.
 
-[![SDDM](https://img.shields.io/badge/SDDM-greeter-0b1626?style=flat-square)](https://github.com/sddm/sddm) [![Qt](https://img.shields.io/badge/Qt-QML-41CD52?style=flat-square&logo=qt&logoColor=white)](https://qt.io) [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-8ec5ff?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.html) [![Last commit](https://img.shields.io/github/last-commit/tiraq-official/lyne-dots-sddm?style=flat-square&color=9ece6a)](https://github.com/tiraq-official/AnimeUnlock/commits)
+[![SDDM](https://img.shields.io/badge/SDDM-greeter-0b1626?style=flat-square)](https://github.com/sddm/sddm) [![Qt](https://img.shields.io/badge/Qt-QML-41CD52?style=flat-square&logo=qt&logoColor=white)](https://qt.io) [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-8ec5ff?style=flat-square)](https://www.gnu.org/licenses/gpl-3.0.html) [![Last commit](https://img.shields.io/github/last-commit/tiraq-official/AnimeUnlock?style=flat-square&color=9ece6a)](https://github.com/tiraq-official/AnimeUnlock/commits)
 
 [Screens](#screens) · [Highlights](#highlights) · [Install](#install) · [Configure](#configure) · [Credits](#credits)
 
@@ -30,7 +30,16 @@ git clone https://github.com/tiraq-official/AnimeUnlock.git
 cd AnimeUnlock && bash install.sh
 ```
 
-It copies the theme to `/usr/share/sddm/themes/AnimeUnlock` and points SDDM at it. Then log out, or `sudo systemctl restart sddm`.
+It copies the theme to `/usr/share/sddm/themes/AnimeUnlock`, points SDDM at it, then asks for two paths:
+
+1. **Wallpaper** — copied into `assets/`, and the blurred copy the unlock transition fades to is regenerated from it.
+2. **Profile picture** — copied in and shown as the circle in the password bar.
+
+Paste the full path to each; press Enter to keep what is already there. Change either one later with:
+
+```bash
+bash /usr/share/sddm/themes/AnimeUnlock/install.sh --reconfigure
+```
 
 Preview it without logging out:
 

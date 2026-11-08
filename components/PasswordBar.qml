@@ -68,8 +68,9 @@ Item {
                 height: bar.avatarD
                 anchors.centerIn: parent
 
-                // the account's own ~/.face.icon wins when we can crop it
-                readonly property bool showUserIcon: roundLoader.status === Loader.Ready && bar.userIcon !== ""
+                // an avatar set in theme.conf always wins; otherwise fall back to
+                // the account's own ~/.face.icon when we can crop it
+                readonly property bool showUserIcon: root.avatarImage === "" && roundLoader.status === Loader.Ready && bar.userIcon !== ""
 
                 Rectangle {
                     anchors.fill: parent
@@ -82,7 +83,7 @@ Item {
                 Loader {
                     id: roundLoader
                     anchors.fill: parent
-                    active: bar.userIcon !== ""
+                    active: root.avatarImage === "" && bar.userIcon !== ""
                     source: "RoundImage.qml"
                     onLoaded: item.source = bar.userIcon
                 }
