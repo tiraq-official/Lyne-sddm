@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="docs/banner.png">
+  <img src="Previews/banner.png">
 </p>
 
 ## Features
