@@ -18,8 +18,8 @@ Item {
     property string selName: ""
     property rect   frostRect: Qt.rect(0, 0, 0, 0)
 
-    implicitWidth:  row.implicitWidth + root.s(34)
-    implicitHeight: root.s(52)
+    implicitWidth:  row.implicitWidth + root.s(30)
+    implicitHeight: root.s(42)
     width:  implicitWidth
     height: implicitHeight
 
@@ -63,7 +63,7 @@ Item {
         spacing: root.s(9)
 
         Icon {
-            width: root.s(20)
+            width: root.s(18)
             height: row.height
             name: "monitor"
             color: root.cText
@@ -73,11 +73,11 @@ Item {
             text: session.selName !== "" ? session.selName : "Session"
             color: root.cText
             font.family: root.fontFamily
-            font.pixelSize: root.s(19)
+            font.pixelSize: root.s(17)
             verticalAlignment: Text.AlignVCenter
         }
         Icon {
-            width: root.s(15)
+            width: root.s(13)
             height: row.height
             name: "chevron"
             color: root.cText

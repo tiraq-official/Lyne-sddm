@@ -9,8 +9,8 @@ Item {
     property rect frostRect: Qt.rect(0, 0, 0, 0)
     signal activated()
 
-    implicitWidth:  row.implicitWidth + root.s(46)
-    implicitHeight: root.s(52)
+    implicitWidth:  row.implicitWidth + root.s(40)
+    implicitHeight: root.s(42)
     width:  implicitWidth
     height: implicitHeight
 
@@ -38,7 +38,7 @@ Item {
         spacing: root.s(11)
 
         Icon {
-            width: root.s(17)
+            width: root.s(15)
             height: row.height
             name: "lock"
             color: root.cText
@@ -48,7 +48,7 @@ Item {
             text: root.promptText
             color: root.cText
             font.family: root.monoFamily
-            font.pixelSize: root.s(17)
+            font.pixelSize: root.s(16)
             font.letterSpacing: root.s(0.6)
             verticalAlignment: Text.AlignVCenter
         }

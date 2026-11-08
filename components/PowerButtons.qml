@@ -7,7 +7,7 @@ import QtQuick 2.11
 Item {
     id: cluster
     property real u: 1
-    property real d: root.s(48)
+    property real d: root.s(42)
     property rect frostBase: Qt.rect(0, 0, 0, 0)
 
     implicitWidth:  row.implicitWidth

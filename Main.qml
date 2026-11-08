@@ -44,8 +44,8 @@ Rectangle {
     // tint + accent are derived from the wallpaper (configure.py writes them)
     property color cTint:        (config.TintColor   && config.TintColor   !== "") ? config.TintColor   : "#071427"
     property color cAccentTint:  (config.AccentColor && config.AccentColor !== "") ? config.AccentColor : "#a7d4ff"
-    property color cGlass:       Qt.rgba(cTint.r, cTint.g, cTint.b, 0.78)
-    property color cGlassStrong: Qt.rgba(cTint.r * 0.80, cTint.g * 0.80, cTint.b * 0.80, 0.90)
+    property color cGlass:       Qt.rgba(cTint.r * 0.90, cTint.g * 0.90, cTint.b * 0.90, 0.86)
+    property color cGlassStrong: Qt.rgba(cTint.r * 0.75, cTint.g * 0.75, cTint.b * 0.75, 0.93)
     property color cStroke:      Qt.rgba(1, 1, 1, 0.14)
     property color cAccent:      cAccentTint
     property color cDanger:      "#ffb4b4"
