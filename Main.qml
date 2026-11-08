@@ -1,5 +1,5 @@
 //
-// AnimeUnlock — an SDDM greeter theme
+// Lyne-sddm — an SDDM greeter theme
 //
 // Flow
 //   1. Idle screen  : clock + weather, a profile selector on the left,

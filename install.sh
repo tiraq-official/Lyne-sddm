@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install the AnimeUnlock SDDM theme, then ask for a wallpaper and a profile
+# Install the Lyne-sddm SDDM theme, then ask for a wallpaper and a profile
 # picture. Re-run with --reconfigure to change those later.
 #
 #   bash install.sh                # install + configure
@@ -8,10 +8,10 @@
 #
 set -euo pipefail
 
-THEME="AnimeUnlock"
+THEME="Lyne-sddm"
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST="/usr/share/sddm/themes/${THEME}"
-DROPIN="/etc/sddm.conf.d/zz-animeunlock.conf"
+DROPIN="/etc/sddm.conf.d/zz-lyne-sddm.conf"
 
 # ---------------------------------------------------------------- reconfigure
 if [ "${1:-}" = "--reconfigure" ]; then
@@ -78,3 +78,14 @@ Log out, or:  sudo systemctl restart sddm
 Change the wallpaper or profile picture later:
   bash ${DEST}/install.sh --reconfigure
 EOF
+
+# One-time note for anyone upgrading from the theme's old name.
+if [ -f /etc/sddm.conf.d/zz-animeunlock.conf ] || [ -d /usr/share/sddm/themes/AnimeUnlock ]; then
+    cat <<EOF
+
+An older "AnimeUnlock" install is still on disk. Once this one looks right,
+clear it out with:
+  sudo rm -rf /usr/share/sddm/themes/AnimeUnlock
+  sudo rm -f  /etc/sddm.conf.d/zz-animeunlock.conf
+EOF
+fi

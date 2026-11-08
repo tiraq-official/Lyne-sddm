@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-configure.py — wallpaper and profile picture for the AnimeUnlock greeter.
+configure.py — wallpaper and profile picture for the Lyne-sddm greeter.
 
 Prompts for a path, copies the image into the theme's assets/ folder in the
 format the theme expects, regenerates the blurred wallpaper from it, and points
@@ -8,7 +8,7 @@ theme.conf at the result. Run it again at any time to change either one.
 
     python3 configure.py                  # asks for both
     python3 configure.py --wallpaper ~/wall.png
-    python3 configure.py --theme /usr/share/sddm/themes/AnimeUnlock
+    python3 configure.py --theme /usr/share/sddm/themes/Lyne-sddm
 
 Press Enter at a prompt to keep what is already there.
 """
@@ -206,7 +206,7 @@ def build_avatar(src, out):
 
 def main():
     ap = argparse.ArgumentParser(
-        description="Set the wallpaper and profile picture for the AnimeUnlock theme.")
+        description="Set the wallpaper and profile picture for the Lyne-sddm theme.")
     ap.add_argument("--theme", default=os.path.dirname(os.path.abspath(__file__)),
                     help="theme folder (default: the folder this script is in)")
     ap.add_argument("--wallpaper", help="wallpaper image; skips that prompt")
@@ -219,7 +219,7 @@ def main():
         sys.exit("No theme.conf in %s — is that the theme folder?" % theme)
 
     print()
-    print("AnimeUnlock — wallpaper & profile picture")
+    print("Lyne-sddm — wallpaper & profile picture")
     print("=" * 42)
 
     # ---------------------------------------------------------- wallpaper --
