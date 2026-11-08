@@ -20,7 +20,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from collections import Counter
 from pathlib import Path
 
 try:
@@ -122,12 +121,12 @@ def _dominant_hue(im):
     """Hue and saturation of the most prominent colourful part of an image."""
     small = im.resize((80, 80), Image.LANCZOS)
     q = small.quantize(colors=16, method=Image.MEDIANCUT).convert("RGB")
-    pixels = list(q.getdata())
-    counts = Counter(pixels)
-    total = float(len(pixels))
+    # getcolors() rather than getdata(): the latter is deprecated in Pillow 12+
+    counts = q.getcolors(4096) or []
+    total = float(sum(n for n, _ in counts)) or 1.0
 
     best_hsv, best_score = None, -1.0
-    for rgb, n in counts.items():
+    for n, rgb in counts:
         h, s, v = colorsys.rgb_to_hsv(rgb[0] / 255.0, rgb[1] / 255.0, rgb[2] / 255.0)
         if v < 0.08 or v > 0.97:            # skip near-black and near-white
             continue
@@ -136,7 +135,7 @@ def _dominant_hue(im):
             best_hsv, best_score = (h, s, v), score
 
     if best_hsv is None:                    # nothing colourful: just average it
-        avg = tuple(sum(c) / total for c in zip(*pixels))
+        avg = tuple(sum(n * rgb[i] for n, rgb in counts) / total for i in range(3))
         h, s, _v = colorsys.rgb_to_hsv(avg[0] / 255.0, avg[1] / 255.0, avg[2] / 255.0)
         return h, s
     return best_hsv[0], best_hsv[1]
